@@ -1,11 +1,11 @@
 interface LocationEntityProps {
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
 }
 
 export class LocationEntity {
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
   constructor({ latitude, longitude }: LocationEntityProps) {
     this.latitude = latitude;
     this.longitude = longitude;
