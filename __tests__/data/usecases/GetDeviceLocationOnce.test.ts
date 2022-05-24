@@ -1,21 +1,6 @@
-import { GetGeolocationOnce } from '@data/location/GetGeolocationOnce';
+import { GetDeviceLocationOnce } from '@data/usecases/GetDeviceLocationOnce';
 import { LocationEntity } from '@domain/entities/LocationEntity';
 import { DomainError } from '@domain/helpers/DomainError';
-
-export class GetDeviceLocationOnce {
-  getGeolocationOnce: GetGeolocationOnce;
-  constructor(getGeolocationOnce: GetGeolocationOnce) {
-    this.getGeolocationOnce = getGeolocationOnce;
-  }
-  async get(): Promise<LocationEntity> {
-    try {
-      const location = await this.getGeolocationOnce.get();
-      return location;
-    } catch (error) {
-      throw DomainError.unexpected;
-    }
-  }
-}
 
 describe('GetDeviceLocationOnce', () => {
   const getGeolocationOnceSpy = {
