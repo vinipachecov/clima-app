@@ -1,5 +1,6 @@
 import { GetGeolocationOnce } from '@data/location/GetGeolocationOnce';
 import { LocationEntity } from '@domain/entities/LocationEntity';
+import { DomainError } from '@domain/helpers/DomainError';
 
 export class GetDeviceLocationOnce {
   getGeolocationOnce: GetGeolocationOnce;
@@ -7,8 +8,12 @@ export class GetDeviceLocationOnce {
     this.getGeolocationOnce = getGeolocationOnce;
   }
   async get(): Promise<LocationEntity> {
-    const location = await this.getGeolocationOnce.get();
-    return location;
+    try {
+      const location = await this.getGeolocationOnce.get();
+      return location;
+    } catch (error) {
+      throw DomainError.unexpected;
+    }
   }
 }
 
@@ -26,6 +31,8 @@ describe('GetDeviceLocationOnce', () => {
         longitude: 123456,
       }),
     );
+  const onFailMock = () =>
+    getGeolocationOnceSpy.get.mockRejectedValueOnce(new Error());
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -49,5 +56,11 @@ describe('GetDeviceLocationOnce', () => {
         longitude: 123456,
       }),
     );
+  });
+
+  it('Should throw an Unexpected error when GetGeolocationOnce fails', async () => {
+    onFailMock();
+    const locationPromise = sut.get();
+    expect(locationPromise).rejects.toThrow(DomainError.unexpected);
   });
 });
