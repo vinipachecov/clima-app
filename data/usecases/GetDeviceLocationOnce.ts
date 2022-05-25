@@ -7,9 +7,10 @@ export class GetDeviceLocationOnce {
   constructor(getGeolocationOnce: GetGeolocationOnce) {
     this.getGeolocationOnce = getGeolocationOnce;
   }
+
   async get(): Promise<LocationEntity> {
     try {
-      const location = await this.getGeolocationOnce.get();
+      const location = await this.getGeolocationOnce.getOnce();
       return location;
     } catch (error) {
       throw DomainError.unexpected;
