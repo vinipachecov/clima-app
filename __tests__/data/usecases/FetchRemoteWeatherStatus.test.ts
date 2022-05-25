@@ -1,8 +1,6 @@
-import { HttpClient } from '@data/http/HttpClient';
-import { HttpError } from '@data/http/HttpError';
+import { HttpClient, HttpStatusCode } from '@data/http/HttpClient';
 import { AccessDeniedError } from '@domain/errors/AccessDeniedError';
 import { UnexpectedError } from '@domain/errors/UnexpectedError';
-import { DomainError } from '@domain/helpers/DomainError';
 import { FetchWeatherStatusProps } from '@domain/usecases/FetchWeatherStatus';
 import { faker } from '@faker-js/faker';
 
@@ -15,17 +13,16 @@ class FetchRemoteWeatherStatus {
   }
 
   async fetch({ latitude, longitude }: FetchWeatherStatusProps) {
-    try {
-      await this.httpClient.request({
-        url: this.url,
-      });
-      return null;
-    } catch (error) {
-      if (error === HttpError.Unauthorized) {
+    const response = await this.httpClient.request({
+      url: this.url,
+    });
+    switch (response.statusCode) {
+      case HttpStatusCode.ok:
+        return response.body;
+      case HttpStatusCode.Unauthorized:
         throw new AccessDeniedError();
-      } else {
+      default:
         throw new UnexpectedError();
-      }
     }
   }
 }
@@ -37,10 +34,18 @@ const httpClientMock = {
 };
 const url = faker.internet.url();
 
-const onFailRequest = (error: HttpError) =>
-  httpClientMock.request.mockRejectedValueOnce(error);
+const onSuccessRequest = () =>
+  httpClientMock.request.mockReturnValue({
+    statusCode: HttpStatusCode.ok,
+  });
+
+const onFailRequest = (error: HttpStatusCode) =>
+  httpClientMock.request.mockReturnValue({
+    statusCode: error,
+  });
 
 beforeEach(() => {
+  onSuccessRequest();
   sut = new FetchRemoteWeatherStatus(httpClientMock, url);
   jest.clearAllMocks();
 });
@@ -55,7 +60,7 @@ describe('FetchRemoteWeatherStatus', () => {
   });
 
   it('Should throw AccessDeniedError if HttpClient returns 401', async () => {
-    onFailRequest(HttpError.Unauthorized);
+    onFailRequest(HttpStatusCode.Unauthorized);
     const promise = sut.fetch({
       latitude: 123456,
       longitude: 123456,
@@ -64,7 +69,7 @@ describe('FetchRemoteWeatherStatus', () => {
   });
 
   it('Should throw Unexpected if HttpClient returns something else', async () => {
-    onFailRequest(HttpError.BadRequest);
+    onFailRequest(HttpStatusCode.BadRequest);
     const promise = sut.fetch({
       latitude: 123456,
       longitude: 123456,
