@@ -1,29 +1,20 @@
-export enum WeatherType {
-  CLEAR_SKY,
-  FEW_CLOUDS,
-  SCATTERED_CLOUDS,
-  BROKEN_CLOUDS,
-  SHOWER_RAIN,
-  RAIN,
-  THUNDERSTORM,
-  SNOW,
-  MIST,
-}
-
 interface WeatherStatusEntityProps {
   description: string;
-  type: WeatherType;
+  type: string;
   icon: string;
+  city: string;
 }
 
 export class WeatherStatusEntity {
   description: string;
-  type: WeatherType;
+  type: string;
   icon: string;
+  city: string;
 
-  constructor({ description, icon, type }: WeatherStatusEntityProps) {
+  constructor({ description, icon, type, city }: WeatherStatusEntityProps) {
     this.description = description;
     this.type = type;
     this.icon = icon;
+    this.city = city;
   }
 }
