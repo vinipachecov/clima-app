@@ -3,11 +3,34 @@ interface RequestProps {
   headers?: {
     [key: string]: string;
   };
+  method: HttpMethod;
   body?: {
     [key: string]: unknown;
   };
 }
+export enum HttpStatusCode {
+  ok = 200,
+  BadRequest = 400,
+  NotFound = 404,
+  ServerError = 500,
+  Unauthorized = 401,
+}
 
-export interface HttpClient {
-  request({ url, headers, body }: RequestProps): Promise<unknown>;
+export type HttpMethod = 'get' | 'post' | 'put' | 'delete';
+
+interface HttpResponse<T> {
+  statusCode: number;
+  body?: T;
+  headers?: {
+    [key: string]: string;
+  };
+}
+
+export interface HttpClient<R = any> {
+  request({
+    url,
+    method,
+    headers,
+    body,
+  }: RequestProps): Promise<HttpResponse<R>>;
 }
