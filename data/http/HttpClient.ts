@@ -4,9 +4,7 @@ export interface HttpRequestProps {
     [key: string]: string;
   };
   method: HttpMethod;
-  body?: {
-    [key: string]: unknown;
-  };
+  body?: any;
 }
 export enum HttpStatusCode {
   ok = 200,
@@ -16,7 +14,7 @@ export enum HttpStatusCode {
   Unauthorized = 401,
 }
 
-export type HttpMethod = 'get' | 'post' | 'put' | 'delete';
+export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | string;
 
 interface HttpResponse<T> {
   statusCode: number;
