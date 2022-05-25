@@ -1,40 +1,8 @@
-import { HttpClient, HttpStatusCode } from '@data/http/HttpClient';
-import {
-  RemoteWeatherStatusModel,
-  RemoteWeatherStatusModelProps,
-} from '@data/models/RemoteWeatherStatusModel';
+import { faker } from '@faker-js/faker';
 import { AccessDeniedError } from '@domain/errors/AccessDeniedError';
 import { UnexpectedError } from '@domain/errors/UnexpectedError';
-import { FetchWeatherStatus } from '@domain/usecases/FetchWeatherStatus';
-import { faker } from '@faker-js/faker';
-
-class FetchRemoteWeatherStatus implements FetchWeatherStatus {
-  private httpClient: HttpClient<RemoteWeatherStatusModelProps>;
-  private url: string;
-  constructor(httpClient: HttpClient, url: string) {
-    this.httpClient = httpClient;
-    this.url = url;
-  }
-
-  async fetch() {
-    try {
-      const response = await this.httpClient.request({
-        url: this.url,
-        method: 'get',
-      });
-      switch (response.statusCode) {
-        case HttpStatusCode.ok:
-          return RemoteWeatherStatusModel.toEntity(response.body);
-        case HttpStatusCode.Unauthorized:
-          throw new AccessDeniedError();
-        default:
-          throw new UnexpectedError();
-      }
-    } catch (error) {
-      throw new UnexpectedError();
-    }
-  }
-}
+import { HttpStatusCode } from '@data/http/HttpClient';
+import { FetchRemoteWeatherStatus } from '@data/usecases/FetchRemoteWeatherStatus';
 
 let sut: FetchRemoteWeatherStatus;
 
@@ -46,6 +14,14 @@ const url = faker.internet.url();
 const onSuccessRequest = () =>
   httpClientMock.request.mockReturnValue({
     statusCode: HttpStatusCode.ok,
+    body: {
+      name: faker.random.words(),
+      weather: {
+        main: faker.random.words(),
+        description: faker.random.words(3),
+        icon: faker.random.words(),
+      },
+    },
   });
 
 const onFailRequest = (error: HttpStatusCode) =>
@@ -59,10 +35,10 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-describe('FetchRemoteWeatherStatus', () => {
-  it('Should call HttpClient with correct params', async () => {
+describe.only('FetchRemoteWeatherStatus', () => {
+  it.only('Should call HttpClient with correct params', async () => {
     await sut.fetch();
-    expect(httpClientMock.request).toHaveBeenCalledWith({ url });
+    expect(httpClientMock.request).toHaveBeenCalledWith({ url, method: 'get' });
   });
 
   it('Should throw AccessDeniedError if HttpClient returns 401', async () => {
