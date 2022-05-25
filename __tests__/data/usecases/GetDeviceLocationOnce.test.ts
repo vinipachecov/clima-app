@@ -4,20 +4,20 @@ import { DomainError } from '@domain/helpers/DomainError';
 
 describe('GetDeviceLocationOnce', () => {
   const getGeolocationOnceSpy = {
-    get: jest.fn(),
+    getOnce: jest.fn(),
   };
 
   let sut: GetDeviceLocationOnce;
 
   const onSuccessMock = () =>
-    getGeolocationOnceSpy.get.mockReturnValue(
+    getGeolocationOnceSpy.getOnce.mockReturnValue(
       new LocationEntity({
         latitude: 123456,
         longitude: 123456,
       }),
     );
   const onFailMock = () =>
-    getGeolocationOnceSpy.get.mockRejectedValueOnce(new Error());
+    getGeolocationOnceSpy.getOnce.mockRejectedValueOnce(new Error());
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -28,7 +28,7 @@ describe('GetDeviceLocationOnce', () => {
   it('Should call getGeolocationOnce', async () => {
     await sut.get();
 
-    expect(getGeolocationOnceSpy.get).toHaveBeenCalled();
+    expect(getGeolocationOnceSpy.getOnce).toHaveBeenCalled();
   });
 
   it('Should return a LocationEntity when succeeds', async () => {
