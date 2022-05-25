@@ -1,4 +1,8 @@
 import { HttpClient } from '@data/http/HttpClient';
+import { HttpError } from '@data/http/HttpError';
+import { AccessDeniedError } from '@domain/errors/AccessDeniedError';
+import { UnexpectedError } from '@domain/errors/UnexpectedError';
+import { DomainError } from '@domain/helpers/DomainError';
 import { FetchWeatherStatusProps } from '@domain/usecases/FetchWeatherStatus';
 import { faker } from '@faker-js/faker';
 
@@ -10,11 +14,19 @@ class FetchRemoteWeatherStatus {
     this.url = url;
   }
 
-  fetch({ latitude, longitude }: FetchWeatherStatusProps) {
-    this.httpClient.request({
-      url: this.url,
-    });
-    return null;
+  async fetch({ latitude, longitude }: FetchWeatherStatusProps) {
+    try {
+      await this.httpClient.request({
+        url: this.url,
+      });
+      return null;
+    } catch (error) {
+      if (error === HttpError.Unauthorized) {
+        throw new AccessDeniedError();
+      } else {
+        throw new UnexpectedError();
+      }
+    }
   }
 }
 
@@ -25,8 +37,12 @@ const httpClientMock = {
 };
 const url = faker.internet.url();
 
+const onFailRequest = (error: HttpError) =>
+  httpClientMock.request.mockRejectedValueOnce(error);
+
 beforeEach(() => {
   sut = new FetchRemoteWeatherStatus(httpClientMock, url);
+  jest.clearAllMocks();
 });
 
 describe('FetchRemoteWeatherStatus', () => {
@@ -36,5 +52,23 @@ describe('FetchRemoteWeatherStatus', () => {
       longitude: 123456,
     });
     expect(httpClientMock.request).toHaveBeenCalledWith({ url });
+  });
+
+  it('Should throw AccessDeniedError if HttpClient returns 401', async () => {
+    onFailRequest(HttpError.Unauthorized);
+    const promise = sut.fetch({
+      latitude: 123456,
+      longitude: 123456,
+    });
+    await expect(promise).rejects.toThrow(new AccessDeniedError());
+  });
+
+  it('Should throw Unexpected if HttpClient returns something else', async () => {
+    onFailRequest(HttpError.BadRequest);
+    const promise = sut.fetch({
+      latitude: 123456,
+      longitude: 123456,
+    });
+    await expect(promise).rejects.toThrow(new UnexpectedError());
   });
 });
