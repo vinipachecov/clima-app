@@ -1,4 +1,4 @@
-interface RequestProps {
+export interface HttpRequestProps {
   url: string;
   headers?: {
     [key: string]: string;
@@ -32,5 +32,5 @@ export interface HttpClient<R = any> {
     method,
     headers,
     body,
-  }: RequestProps): Promise<HttpResponse<R>>;
+  }: HttpRequestProps): Promise<HttpResponse<R>>;
 }
