@@ -10,6 +10,8 @@ const httpClientMock = {
   request: jest.fn(),
 };
 const url = faker.internet.url();
+const latitude = parseInt(faker.random.numeric(30), 10);
+const longitude = parseInt(faker.random.numeric(30), 10);
 
 const onSuccessRequest = () =>
   httpClientMock.request.mockReturnValue({
@@ -20,6 +22,17 @@ const onSuccessRequest = () =>
         main: faker.random.words(),
         description: faker.random.words(3),
         icon: faker.random.words(),
+      },
+    },
+  });
+
+const onIncompleteDataRequest = () =>
+  httpClientMock.request.mockReturnValue({
+    statusCode: HttpStatusCode.ok,
+    body: {
+      name: faker.random.words(),
+      weather: {
+        main: faker.random.words(),
       },
     },
   });
@@ -35,21 +48,42 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-describe.only('FetchRemoteWeatherStatus', () => {
-  it.only('Should call HttpClient with correct params', async () => {
-    await sut.fetch();
-    expect(httpClientMock.request).toHaveBeenCalledWith({ url, method: 'get' });
+describe('FetchRemoteWeatherStatus', () => {
+  it('Should call HttpClient with correct params', async () => {
+    await sut.fetch({
+      latitude,
+      longitude,
+    });
+    expect(httpClientMock.request).toHaveBeenCalledWith({
+      url: `${url}&lat=${latitude}&lon=${longitude}`,
+      method: 'get',
+    });
   });
 
   it('Should throw AccessDeniedError if HttpClient returns 401', async () => {
     onFailRequest(HttpStatusCode.Unauthorized);
-    const promise = sut.fetch();
+    const promise = sut.fetch({
+      latitude,
+      longitude,
+    });
     await expect(promise).rejects.toThrow(new AccessDeniedError());
   });
 
   it('Should throw Unexpected if HttpClient returns something else', async () => {
     onFailRequest(HttpStatusCode.BadRequest);
-    const promise = sut.fetch();
+    const promise = sut.fetch({
+      latitude,
+      longitude,
+    });
+    await expect(promise).rejects.toThrow(new UnexpectedError());
+  });
+
+  it('Should throw Unexpected if HttpClient returns incomplete data', async () => {
+    onIncompleteDataRequest();
+    const promise = sut.fetch({
+      latitude,
+      longitude,
+    });
     await expect(promise).rejects.toThrow(new UnexpectedError());
   });
 });
