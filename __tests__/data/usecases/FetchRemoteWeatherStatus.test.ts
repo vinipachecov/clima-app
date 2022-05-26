@@ -18,11 +18,13 @@ const onSuccessRequest = () =>
     statusCode: HttpStatusCode.ok,
     body: {
       name: faker.random.words(),
-      weather: {
-        main: faker.random.words(),
-        description: faker.random.words(3),
-        icon: faker.random.words(),
-      },
+      weather: [
+        {
+          main: faker.random.words(),
+          description: faker.random.words(3),
+          icon: faker.random.words(),
+        },
+      ],
     },
   });
 
@@ -43,9 +45,9 @@ const onFailRequest = (error: HttpStatusCode) =>
   });
 
 beforeEach(() => {
+  jest.clearAllMocks();
   onSuccessRequest();
   sut = new FetchRemoteWeatherStatus(httpClientMock, url);
-  jest.clearAllMocks();
 });
 
 describe('FetchRemoteWeatherStatus', () => {
