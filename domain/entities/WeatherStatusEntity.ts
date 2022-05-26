@@ -3,6 +3,7 @@ interface WeatherStatusEntityProps {
   type: string;
   icon: string;
   city: string;
+  temperature: number;
 }
 
 export class WeatherStatusEntity {
@@ -10,11 +11,19 @@ export class WeatherStatusEntity {
   type: string;
   icon: string;
   city: string;
+  temperature: number;
 
-  constructor({ description, icon, type, city }: WeatherStatusEntityProps) {
+  constructor({
+    description,
+    icon,
+    type,
+    city,
+    temperature,
+  }: WeatherStatusEntityProps) {
     this.description = description;
     this.type = type;
     this.icon = icon;
     this.city = city;
+    this.temperature = temperature;
   }
 }
