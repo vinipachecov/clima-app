@@ -8,6 +8,9 @@ const RootNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
         name="LocationScreen"
         component={CurrentLocationScreenFactory}
       />

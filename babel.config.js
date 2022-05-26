@@ -5,13 +5,14 @@ module.exports = {
       'module-resolver',
       {
         root: ['./src'],
-        extensions: ['.ts', '.tsx', '.jsx', '.js', '.json'],
+        extensions: ['.ts', '.tsx', '.jsx', '.js', '.json', '.png'],
         alias: {
           '@data': './data',
           '@domain': './domain',
           '@infra': './infra',
           '@main': './main',
           '@ui': './ui',
+          '@res': './res',
         },
       },
     ],

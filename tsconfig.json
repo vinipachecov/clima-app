@@ -16,6 +16,9 @@
       ],
       "@domain/*": [
         "./domain/*"
+      ],
+      "@res/*": [
+        "./res/*"
       ]
     },
     "allowJs": true,
