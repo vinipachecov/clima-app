@@ -20,7 +20,7 @@ export class FetchRemoteWeatherStatus implements FetchWeatherStatus {
   async fetch({ latitude, longitude }: FetchWeatherStatusProps) {
     try {
       const response = await this.httpClient.request({
-        url: `${this.url}&lat=${latitude}&lon=${longitude}`,
+        url: `${this.url}&lat=${latitude}&lon=${longitude}&units=metric`,
         method: 'get',
       });
       switch (response.statusCode) {
