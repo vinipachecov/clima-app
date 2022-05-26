@@ -4,7 +4,10 @@ import {
   RemoteWeatherStatusModelProps,
 } from '@data/models/RemoteWeatherStatusModel';
 import { UnexpectedError, AccessDeniedError } from '@domain/errors';
-import { FetchWeatherStatus } from '@domain/usecases/FetchWeatherStatus';
+import {
+  FetchWeatherStatus,
+  FetchWeatherStatusProps,
+} from '@domain/usecases/FetchWeatherStatus';
 
 export class FetchRemoteWeatherStatus implements FetchWeatherStatus {
   private httpClient: HttpClient<RemoteWeatherStatusModelProps>;
@@ -14,10 +17,10 @@ export class FetchRemoteWeatherStatus implements FetchWeatherStatus {
     this.url = url;
   }
 
-  async fetch() {
+  async fetch({ latitude, longitude }: FetchWeatherStatusProps) {
     try {
       const response = await this.httpClient.request({
-        url: this.url,
+        url: `${this.url}&lat=${latitude}&lon=${longitude}`,
         method: 'get',
       });
       switch (response.statusCode) {
@@ -29,7 +32,7 @@ export class FetchRemoteWeatherStatus implements FetchWeatherStatus {
           throw new UnexpectedError();
       }
     } catch (error) {
-      throw new UnexpectedError();
+      throw error;
     }
   }
 }
