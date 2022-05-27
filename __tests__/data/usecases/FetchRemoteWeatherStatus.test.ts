@@ -25,6 +25,9 @@ const onSuccessRequest = () =>
           icon: faker.random.words(),
         },
       ],
+      main: {
+        temp: faker.random.numeric(2),
+      },
     },
   });
 
@@ -57,7 +60,7 @@ describe('FetchRemoteWeatherStatus', () => {
       longitude,
     });
     expect(httpClientMock.request).toHaveBeenCalledWith({
-      url: `${url}&lat=${latitude}&lon=${longitude}`,
+      url: `${url}&lat=${latitude}&lon=${longitude}&units=metric`,
       method: 'get',
     });
   });
