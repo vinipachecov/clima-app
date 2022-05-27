@@ -13,6 +13,7 @@ module.exports = {
           '@main': './main',
           '@ui': './ui',
           '@res': './res',
+          '@mocks': './__mocks__',
         },
       },
     ],
