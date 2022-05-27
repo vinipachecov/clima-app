@@ -1,6 +1,9 @@
-import { ANDROID_PERMISSIONS } from '@domain/usecases/LocationPermission';
+import {
+  ANDROID_PERMISSIONS,
+  IOS_PERMISSIONS,
+} from '@domain/usecases/LocationPermission';
 import { PermissionAdapter } from '@infra/permission/PermissionAdapter';
-import { request, check } from '@mocks/react-native-permissions';
+import { request, check, PERMISSIONS } from '@mocks/react-native-permissions';
 import { PermissionStatus } from 'react-native-permissions';
 
 describe('PermissionAdapter', () => {
@@ -44,15 +47,38 @@ describe('PermissionAdapter', () => {
       sut = new PermissionAdapter();
     });
 
-    it('should return true when check returns granted ', async () => {
-      const result = await sut.check(ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION);
+    it('should return true when permission was provided', async () => {
+      const result = await sut.check(
+        'android',
+        ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
       expect(result).toBe(true);
     });
 
-    it('should return false when check returns denied ', async () => {
+    it('should return false when permission was denied', async () => {
       checkPermissionMock('denied');
-      const result = await sut.check(ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION);
+      const result = await sut.check(
+        'android',
+        ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
       expect(result).toBe(false);
+    });
+
+    it('should call RN-permission check with location always permission when params provided ', async () => {
+      await sut.check('ios', IOS_PERMISSIONS.LOCATION_ALWAYS);
+      expect(check).toHaveBeenCalledWith(PERMISSIONS.IOS.LOCATION_ALWAYS);
+    });
+
+    it('should call RN-permission check with LOCATION_WHEN_IN_USE when IOS permission LOCATION_WHEN_IN_USE is provided  ', async () => {
+      await sut.check('ios', IOS_PERMISSIONS.LOCATION_WHEN_IN_USE);
+      expect(check).toHaveBeenCalledWith(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
+    });
+
+    it('should call check with android location permission when android platform is provided', async () => {
+      await sut.check('android', ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION);
+      expect(check).toHaveBeenCalledWith(
+        PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+      );
     });
   });
 });
