@@ -1,4 +1,4 @@
-import { GetDeviceLocationOnce } from '@data/usecases/GetDeviceLocationOnce';
+import { GetDeviceLocationOnce } from '@data/usecases/location/GetDeviceLocationOnce';
 import { makeLocationAdapterFactory } from '@main/adapters/LocationAdapterFactory';
 
 export const makeGetDeviceLocationOnce = () =>
