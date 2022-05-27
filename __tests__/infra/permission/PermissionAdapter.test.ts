@@ -1,3 +1,4 @@
+import { UnexpectedError } from '@domain/errors';
 import {
   ANDROID_PERMISSIONS,
   IOS_PERMISSIONS,
@@ -48,34 +49,33 @@ describe('PermissionAdapter', () => {
     });
 
     it('should return true when permission was provided', async () => {
-      const result = await sut.check(
-        'android',
-        ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
+      const result = await sut.check(ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION);
       expect(result).toBe(true);
     });
 
     it('should return false when permission was denied', async () => {
       checkPermissionMock('denied');
-      const result = await sut.check(
-        'android',
-        ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION,
-      );
+      const result = await sut.check(ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION);
       expect(result).toBe(false);
     });
 
+    it('should return false when permission was denied', async () => {
+      const promise = sut.check('something else' as ANDROID_PERMISSIONS);
+      expect(promise).rejects.toThrow(new UnexpectedError());
+    });
+
     it('should call RN-permission check with location always permission when params provided ', async () => {
-      await sut.check('ios', IOS_PERMISSIONS.LOCATION_ALWAYS);
+      await sut.check(IOS_PERMISSIONS.LOCATION_ALWAYS);
       expect(check).toHaveBeenCalledWith(PERMISSIONS.IOS.LOCATION_ALWAYS);
     });
 
     it('should call RN-permission check with LOCATION_WHEN_IN_USE when IOS permission LOCATION_WHEN_IN_USE is provided  ', async () => {
-      await sut.check('ios', IOS_PERMISSIONS.LOCATION_WHEN_IN_USE);
+      await sut.check(IOS_PERMISSIONS.LOCATION_WHEN_IN_USE);
       expect(check).toHaveBeenCalledWith(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
     });
 
     it('should call check with android location permission when android platform is provided', async () => {
-      await sut.check('android', ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION);
+      await sut.check(ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION);
       expect(check).toHaveBeenCalledWith(
         PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
       );
