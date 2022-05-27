@@ -7,6 +7,8 @@ export enum ANDROID_PERMISSIONS {
   ACCESS_FINE_LOCATION = 'access-fine-location',
 }
 
+export type DevicePermission = IOS_PERMISSIONS | ANDROID_PERMISSIONS;
+
 export interface LocationPermission {
   request(plaform: string): Promise<boolean>;
 }
