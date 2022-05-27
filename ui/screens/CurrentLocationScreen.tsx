@@ -5,6 +5,9 @@ import {
   View,
   Button,
   ActivityIndicator,
+  Platform,
+  Linking,
+  Alert,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { Image } from 'react-native';
@@ -19,20 +22,31 @@ import LightBackground from '@res/images/light_background.png';
 import DarkBackground from '@res/images/dark_background.png';
 import { useAppearence } from '@ui/hooks/darkMode';
 import { GPSPermissionDeniedError } from '@infra/location/errors/GPSPermissionDeniedError';
+import { GetDeviceLocationPermission } from '@data/usecases/permissions/GetDeviceLocationPermission';
+import { CheckPermission } from '@domain/usecases/CheckPermission';
+import {
+  ANDROID_PERMISSIONS,
+  IOS_PERMISSIONS,
+} from '@domain/usecases/LocationPermission';
 
 type CurrentLocationScreenProps = {
   gpsLocation: GetCurrentDeviceLocation;
   fetchWeatherStatus: FetchWeatherStatus;
   navigation: NavigationProp<any>;
+  locationPermission: GetDeviceLocationPermission;
+  permissionChecker: CheckPermission;
 };
 
 function CurrentLocationScreen({
   fetchWeatherStatus,
   gpsLocation,
+  locationPermission,
+  permissionChecker,
 }: CurrentLocationScreenProps) {
   const [currentLocation, setCurrentLocation] = useState<LocationEntity>();
   const [weatherStatus, setWeatherStatus] = useState<WeatherStatusEntity>();
   const [loading, setLoading] = useState(false);
+  const [gpsDenied, setGpsDenied] = useState(false);
 
   const getLocation = useCallback(async () => {
     try {
@@ -40,6 +54,7 @@ function CurrentLocationScreen({
       setCurrentLocation(position);
     } catch (error) {
       if (error instanceof GPSPermissionDeniedError) {
+        setGpsDenied(true);
         Toast.show({
           type: 'error',
           text1: 'An error occured',
@@ -74,6 +89,49 @@ function CurrentLocationScreen({
       }
     }
   }, [currentLocation, fetchWeatherStatus, setLoading]);
+
+  const requestGPSPermission = useCallback(async () => {
+    if (Platform.OS === 'ios') {
+      const isPermissionGranted = await permissionChecker.check(
+        IOS_PERMISSIONS.LOCATION_WHEN_IN_USE,
+      );
+      if (isPermissionGranted) {
+        setGpsDenied(false);
+        getLocation();
+      } else {
+        Linking.openURL('App-Prefs:LOCATION_SERVICES');
+      }
+    } else {
+      const androidGPSpermission = await permissionChecker.check(
+        ANDROID_PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (androidGPSpermission) {
+        setGpsDenied(false);
+        await getLocation();
+      } else {
+        const permissionProvided = await locationPermission.request('android');
+        if (!permissionProvided) {
+          Alert.alert(
+            'GPS permission still denied',
+            'Go to settings to change?',
+            [
+              {
+                text: 'Yes',
+                onPress: () => {
+                  Linking.sendIntent(
+                    'android.settings.LOCATION_SOURCE_SETTINGS',
+                  );
+                },
+              },
+              {
+                text: 'No',
+              },
+            ],
+          );
+        }
+      }
+    }
+  }, [setGpsDenied, getLocation, permissionChecker, locationPermission]);
 
   useEffect(() => {
     getLocation();
@@ -130,6 +188,21 @@ function CurrentLocationScreen({
                 <ActivityIndicator testID="loading-indicator" size="large" />
               )}
             </>
+          )}
+          {gpsDenied && (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+              }}>
+              <Text style={{ fontSize: 20, textAlign: 'center' }}>
+                Enable location access to the app.
+              </Text>
+              <Button
+                title="Request location permission"
+                onPress={requestGPSPermission}
+              />
+            </View>
           )}
         </View>
       </SafeAreaView>
