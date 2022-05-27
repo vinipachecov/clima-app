@@ -5,14 +5,13 @@ import { UnexpectedError } from '@domain/errors/UnexpectedError';
 import { GPSPermissionDeniedError } from '@infra/location/errors/GPSPermissionDeniedError';
 
 export class GetDeviceLocationOnce {
-  getGeolocationOnce: GetGeolocationOnce;
-  constructor(getGeolocationOnce: GetGeolocationOnce) {
-    this.getGeolocationOnce = getGeolocationOnce;
+  constructor(private geolocationRequest: GetGeolocationOnce) {
+    this.geolocationRequest = geolocationRequest;
   }
 
   async get(): Promise<LocationEntity> {
     try {
-      const location = await this.getGeolocationOnce.getOnce();
+      const location = await this.geolocationRequest.getOnce();
       return DeviceGeolocationModel.toEntity(location);
     } catch (error) {
       if (error instanceof GPSPermissionDeniedError) {
