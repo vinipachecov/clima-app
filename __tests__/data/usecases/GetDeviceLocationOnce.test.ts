@@ -1,4 +1,4 @@
-import { GetDeviceLocationOnce } from '@data/usecases/GetDeviceLocationOnce';
+import { GetDeviceLocationOnce } from '@data/usecases/location/GetDeviceLocationOnce';
 import { LocationEntity } from '@domain/entities/LocationEntity';
 import { UnexpectedError } from '@domain/errors/UnexpectedError';
 

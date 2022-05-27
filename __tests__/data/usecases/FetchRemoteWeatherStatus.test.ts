@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { AccessDeniedError } from '@domain/errors/AccessDeniedError';
 import { UnexpectedError } from '@domain/errors/UnexpectedError';
 import { HttpStatusCode } from '@data/http/HttpClient';
-import { FetchRemoteWeatherStatus } from '@data/usecases/FetchRemoteWeatherStatus';
+import { FetchRemoteWeatherStatus } from '@data/usecases/weather/FetchRemoteWeatherStatus';
 
 let sut: FetchRemoteWeatherStatus;
 

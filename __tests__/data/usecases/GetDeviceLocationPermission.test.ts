@@ -1,4 +1,4 @@
-import { GetDeviceLocationPermission } from '@data/usecases/GetDeviceLocationPermission';
+import { GetDeviceLocationPermission } from '@data/usecases/permissions/GetDeviceLocationPermission';
 import { UnexpectedError } from '@domain/errors';
 import { faker } from '@faker-js/faker';
 
