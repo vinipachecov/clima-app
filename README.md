@@ -16,5 +16,6 @@ Stack utilizada:
 |![Light mode](./app-images/App%20light.png)   | ![Dark mode](./app-images/App%20dark.png)  |
 
 
-
+# How to run
+Para rodar o app adicione sua key do open weather api em ```main/config/sandbox.env.ts```
 
