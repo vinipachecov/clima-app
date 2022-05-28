@@ -16,7 +16,7 @@ import {
 export class PermissionAdapter
   implements RequestLocationPermission, CheckDevicePermission
 {
-  async requestLocationPermission(platform: string): Promise<PermissionResult> {
+  async requestLocationPermission(platform: string): Promise<boolean> {
     if (platform === 'ios') {
       return Promise.resolve(false);
     } else {

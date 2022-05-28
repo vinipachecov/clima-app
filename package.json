@@ -1,5 +1,5 @@
 {
-  "name": "rn_clima",
+  "name": "clima_app",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -14,12 +14,11 @@
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",
     "react": "17.0.2",
-    "react-native": "0.68.2",
+    "react-native": "0.67.4",
     "react-native-permissions": "^3.3.1",
     "react-native-safe-area-context": "^4.2.5",
     "react-native-screens": "^3.13.1",
     "react-native-toast-message": "^2.1.5",
-    "react-native-toast-notifications": "^3.2.3",
     "yup": "^0.32.11"
   },
   "devDependencies": {
@@ -28,15 +27,11 @@
     "@faker-js/faker": "^7.0.1",
     "@react-native-community/eslint-config": "^2.0.0",
     "@testing-library/react-native": "^9.1.0",
-    "@types/jest": "^27.5.1",
-    "@types/react": "^18.0.9",
-    "@types/react-native": "^0.67.7",
-    "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^26.6.3",
     "babel-plugin-module-resolver": "^4.1.0",
-    "eslint": "^7.32.0",
+    "eslint": "7.14.0",
     "jest": "^26.6.3",
-    "metro-react-native-babel-preset": "^0.67.0",
+    "metro-react-native-babel-preset": "^0.66.2",
     "react-test-renderer": "17.0.2",
     "typescript": "^4.6.4"
   },
