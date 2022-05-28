@@ -1,3 +1,5 @@
+This app is a personal project to practice and study TDD and Clean Architecture concepts.
+
 O projeto Clima app é a aplicação de algumas horas de estudo para utilizar TDD e Clean Architecture em um domínio limitado.
 
 Arquitetura:
