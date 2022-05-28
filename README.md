@@ -1,5 +1,8 @@
 O projeto Clima app é a aplicação de algumas horas de estudo para utilizar TDD e Clean Architecture em um domínio limitado.
 
+Arquitetura:
+- [Diagrama do App](https://drive.google.com/file/d/1aSV1d9yi6JsNHi3fIyy8CnNvbjcWauda/view?usp=sharing)
+
 Stack utilizada:
 - React-Native
 - react-native-permissions
